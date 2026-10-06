@@ -1,3 +1,4 @@
+
 name: auto check
 
 on:
@@ -43,6 +44,19 @@ jobs:
         python -m pip install --upgrade pip
         pip install requests
         pip install pypushdeer
+
+    - name: Add glados.space support
+      run: |
+        python - <<'PY'
+        from pathlib import Path
+        path = Path("checkin.py")
+        source = path.read_text(encoding="utf-8")
+        old = 'DOMAINS = ["glados.cloud", "railgun.info"]'
+        new = 'DOMAINS = ["glados.space", "glados.cloud", "railgun.info"]'
+        if old not in source:
+            raise SystemExit("Expected DOMAINS declaration was not found")
+        path.write_text(source.replace(old, new), encoding="utf-8")
+        PY
 
     # 执行 签到脚本
     - name: Running checkin
